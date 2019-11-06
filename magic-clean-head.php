@@ -23,14 +23,28 @@ if ( ! defined( 'WPINC' ) ) {
   die;
 }
 
-add_action( 'init', function() {
-  remove_action( 'wp_head', 'wp_generator' );
-  remove_action( 'wp_head', 'rsd_link' );
-  remove_action( 'wp_head', 'wlwmanifest_link' );
-  remove_action( 'wp_head', 'wp_shortlink_wp_head' );
-  remove_action( 'wp_head', 'wp_resource_hints', 2 );
-  remove_action( 'wp_head', 'feed_links', 2 );
-  remove_action( 'wp_head', 'feed_links_extra', 3 );
-  remove_action( 'wp_head', 'rest_output_link_wp_head' );
-  remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head' );
+define( 'MAGIC_CLEAN_HEAD_SLUG', 'magic_clean_head' );
+
+define( 'MAGIC_CLEAN_HEAD_OPTIONS', array(
+  'wp_generator' => 'Wp Generator tag', 
+  'rsd_link' => 'Rsd link tag', 
+  'feed' => 'rss feed links', 
+  'wlwmanifest_link' => 'wlmanifest link', 
+  'wp_shortlink_wp_head' => 'wp shortlink', 
+  'wp_resource_hints' => 'resource hints', 
+  'rest_output_link_wp_head' => 'rest api link',
+  'adjacent_posts_rel_link_wp_head' => 'pagination links',
+  'emojis' => 'emojis',
+  'oembed' => 'disable oembed js and server discovery. embedding your site should continue to work.',
+  'noindex' => 'remove robot noindex tag',
+));
+
+require_once plugin_dir_path( __FILE__ ) . 'includes/plugin.php';
+
+register_activation_hook( __FILE__, function () {
+  flush_rewrite_rules();
+} );
+
+register_deactivation_hook( __FILE__, function () {
+  flush_rewrite_rules();
 } );
