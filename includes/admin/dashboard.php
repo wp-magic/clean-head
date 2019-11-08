@@ -1,4 +1,10 @@
 <?php
+/**
+ * Provices an admin dashboard to this plugin
+ *
+ * @package MagicCleanHead
+ * @since 0.0.1
+ */
 
 add_action(
 	'admin_menu',
