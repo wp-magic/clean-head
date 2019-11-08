@@ -7,52 +7,59 @@
  */
 
 if ( is_admin() ) {
-  require_once 'admin/dashboard.php';
+	require_once 'admin/dashboard.php';
 }
 
 
-add_action( 'init', function() {
-  $opts = array();
-  
-  foreach ( MAGIC_CLEAN_HEAD_OPTIONS as $option => $val ) {
-    $optname = MAGIC_CLEAN_HEAD_SLUG . '_' . $option;
-    $on = magic_get_option( $optname );
-    if ($on) {
-      if ($option === 'emojis') {
-        // remove emoji scripts
-        remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
-        remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
-        remove_action( 'wp_print_styles', 'print_emoji_styles' );
-        remove_action( 'admin_print_styles', 'print_emoji_styles' );
-      } elseif ( $option === 'feed') {
-        remove_action( 'wp_head', 'feed_links', 2 );
-        remove_action( 'wp_head', 'feed_links_extra', 3 ); 
-      } else if ( $option === 'wp_resource_hints') {
-        remove_action( 'wp_head', 'wp_resource_hints', 2);
-      } else if ( $option === 'oembed' ) {
-        // remove embed.js but not the rest api and the auto discovery functionality
-        // embedding this blog on other blogs ~should~ work
+add_action(
+	'init',
+	function() {
+		$opts = array();
 
-        // Remove the REST API endpoint.
-        remove_action('rest_api_init', 'wp_oembed_register_route');
+		foreach ( MAGIC_CLEAN_HEAD_OPTIONS as $option => $val ) {
+			$optname = MAGIC_CLEAN_HEAD_SLUG . '_' . $option;
+			$on      = magic_get_option( $optname );
+			if ( $on ) {
+				if ( $option === 'emojis' ) {
+					  // remove emoji scripts
+					  remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+					  remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
+					  remove_action( 'wp_print_styles', 'print_emoji_styles' );
+					  remove_action( 'admin_print_styles', 'print_emoji_styles' );
+				} elseif ( $option === 'feed' ) {
+					remove_action( 'wp_head', 'feed_links', 2 );
+					remove_action( 'wp_head', 'feed_links_extra', 3 );
+				} elseif ( $option === 'wp_resource_hints' ) {
+					remove_action( 'wp_head', 'wp_resource_hints', 2 );
+				} elseif ( $option === 'oembed' ) {
+					// remove embed.js but not the rest api and the auto discovery functionality
+					// embedding this blog on other blogs ~should~ work
 
-        // Turn off oEmbed auto discovery.
-        // Don't filter oEmbed results.
-        remove_filter('oembed_dataparse', 'wp_filter_oembed_result', 10);
+					// Remove the REST API endpoint.
+					remove_action( 'rest_api_init', 'wp_oembed_register_route' );
 
-        // Remove oEmbed discovery links.
-        remove_action('wp_head', 'wp_oembed_add_discovery_links');
+					// Turn off oEmbed auto discovery.
+					// Don't filter oEmbed results.
+					remove_filter( 'oembed_dataparse', 'wp_filter_oembed_result', 10 );
 
-        // Remove oEmbed-specific JavaScript from the front-end and back-end.
-        remove_action('wp_head', 'wp_oembed_add_host_js');
-      } else {
-        remove_action( 'wp_head', $option );
-      } 
-    }
-  }
-}, PHP_INT_MAX - 1 );
+					// Remove oEmbed discovery links.
+					remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
 
-add_action('init', function () {
-  $domain = MAGIC_CLEAN_HEAD_SLUG;
-  load_plugin_textdomain( $domain, FALSE, plugin_dir_path( __FILE__ ) . 'languages' );
-} );
+					// Remove oEmbed-specific JavaScript from the front-end and back-end.
+					remove_action( 'wp_head', 'wp_oembed_add_host_js' );
+				} else {
+					remove_action( 'wp_head', $option );
+				}
+			}
+		}
+	},
+	PHP_INT_MAX - 1
+);
+
+add_action(
+	'init',
+	function () {
+		$domain = MAGIC_CLEAN_HEAD_SLUG;
+		load_plugin_textdomain( $domain, false, plugin_dir_path( __FILE__ ) . 'languages' );
+	}
+);
